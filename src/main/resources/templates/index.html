@@ -1,0 +1,91 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--<![endif]xmlns:th="http://www.w3.org/1999/xhtml-->
+	<head>
+		<meta charset="utf-8">
+		<title>Home</title>
+		<meta name="description" content="">
+		<meta name="author" content="">
+
+		<!-- Mobile Meta -->
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<script src="http://code.jquery.com/jquery-1.11.3.js"></script>
+
+
+		<!-- Favicon -->
+
+
+		<link th:href="@{bootstrap/css/bootstrap.css}" rel="stylesheet">
+		<link th:href="@{fonts/font-awesome/css/font-awesome.css}" rel="stylesheet">
+		<link th:href="@{css/animations.css}" rel="stylesheet">
+		<link th:href="@{css/style.css}" rel="stylesheet">
+		<!--<link href="css/custom.css" rel="stylesheet">-->
+
+		<script type="text/javascript">
+			function loadBtn() {
+				var data = 'id=' + $('#id').val() + '&password=' + $('#password').val();
+				$.ajax({
+					type : 'POST',
+					url : '/load',
+					data : data,
+					dataType:'TEXT',
+					success : function(check) {
+						if(check=="id wrong"){
+							alert("用户不存在！");
+						}else if(check=="password wrong"){
+							alert("密码错误！")
+						}else{
+							var url = decodeURI("http://localhost:2718/show?name="+check);
+
+							$(location).attr('href', url);
+						}
+					},
+					error : function() {
+						alert('error!')
+					}
+				});
+			}
+
+
+    </script>
+
+	</head>
+
+	<body class="no-trans">
+		<div id="banner" class="banner">
+			<div class="banner-image"></div>
+			<div class="banner-caption">
+				<div class="container">
+					<div class="row">
+						<div class="caption-data" style="margin-top: 0px; opacity: 1;" data-animation-effect="fadeIn">
+								<h1> 欢迎使用BBP购票系统</h1><br/>
+								<h3 class="padding-top30">SZ1716038 包秀平 Web服务计算实验 </h3><br/>
+								<div class="padding-top60 contact-form">
+
+
+										<input type="text" class="form-control" id="id" placeholder="账号" name="name2" required><br/>
+										<input type="text" class="form-control" id="password" placeholder="密码" name="name2" required><br/>
+
+									<button class="btn cta-button" onclick="loadBtn()">登 录</button>
+								</div>
+							</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- banner end -->
+
+
+		<!-- JavaScript -->
+
+
+		<script type="text/javascript" th:src="@{plugins/modernizr.js}"></script>
+		<script type="text/javascript" th:src="@{plugins/isotope/isotope.pkgd.min.js}"></script>
+		<script type="text/javascript" th:src="@{plugins/jquery.backstretch.min.js}"></script>
+		<script type="text/javascript" th:src="@{plugins/jquery.appear.js}"></script>
+
+		<!-- Custom Scripts -->
+		<script type="text/javascript" th:src="@{js/custom.js}"></script>
+
+	</body>
+</html>

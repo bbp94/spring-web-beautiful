@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap Flat Registration Form Template</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:400,100,300,500">
+    <link rel="stylesheet" th:href="@{assets/bootstrap/css/bootstrap.min.css}"><!--right left-->
+    <link rel="stylesheet" th:href="@{assets/font-awesome/css/font-awesome.min.css}"><!--pencil-->
+    <link rel="stylesheet" th:href="@{assets/css/form-elements.css}"><!--signup button-->
+    <link rel="stylesheet" th:href="@{assets/css/style.css}"><!--all-->
+    <script src="http://code.jquery.com/jquery-1.11.3.js"></script>
+
+    <script type="text/javascript">
+        $(function () {
+
+            var name = window.location.href.split("?")[1].split("=")[1];
+            var startDate = window.location.href.split("?")[2].split("=")[1];
+            var number = window.location.href.split("?")[3].split("=")[1];
+            var origin = window.location.href.split("?")[4].split("=")[1];
+            var terminal = window.location.href.split("?")[5].split("=")[1];
+            var endDate  = window.location.href.split("?")[6].split("=")[1];
+            var price = window.location.href.split("?")[7].split("=")[1];
+            document.getElementById("ticket").innerHTML = '<p><font color="#ffb6c1">您将购买 </font><strong>'+decodeURI(startDate)+'</strong> <br/><font color="#ffb6c1">从</font>  <strong>'+decodeURI(origin)+'</strong>  <font color="#ffb6c1">开往</font>  <strong>'+decodeURI(terminal)+'</strong> <font color="#ffb6c1">的</font> <strong>'+number+'</strong>  <font color="#ffb6c1">次车票</font></p>';
+
+        })
+
+        function buy() {
+            var name = window.location.href.split("?")[1].split("=")[1];
+            var start = window.location.href.split("?")[2].split("=")[1];
+            var number = window.location.href.split("?")[3].split("=")[1];
+            var origin = window.location.href.split("?")[4].split("=")[1];
+            var terminal = window.location.href.split("?")[5].split("=")[1];
+
+            // var jsonData = "{\"start\":\""+decodeURI(start)+"\"}";
+            var data = 'date=' + start +'&number='+number+ '&origin=' + origin +
+                '&terminal=' + terminal+'&n='+ $('#n').val();
+            var nameE=document.getElementById("name");
+            var id = document.getElementById("ID");
+            var phone= document.getElementById("phone");
+            var nE = document.getElementById("n")
+            if($('#name').val()=="" || $('#ID').val()=="" || $('#phone').val()=="" ){
+                alert("请将信息填写完整！");
+                return;
+            }
+            if($('#n').val()<=0){
+                alert("购票张数填写有误！");
+                return;
+            }
+            $.ajax({
+                type: 'POST',
+                url: '/buy/check',
+                data: data,
+                dataType : "TEXT",
+                success : function () {
+                    alert("购票成功！");
+                    var url = decodeURI("http://localhost:2718/show?name="+name);
+                    $(location).attr('href', url);
+                },
+                error : function () {
+                    alert('error!');
+                }
+
+            })
+        }
+
+        function back() {
+            var url = decodeURI("http://localhost:2718/show?name="+name);
+            $(location).attr('href', url);
+        }
+
+    </script>
+</head>
+
+<body>
+
+
+<!-- Top content -->
+<div class="top-content">
+
+    <div class="inner-bg">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-7 text">
+                    <h1 id="ticket"></h1>
+                    <div class="description">
+                        <br/>
+                        <h3 ><font color="white">请您于列车出发时刻半小时前至自助取票机处凭身份证取票</font></h3>
+                    </div>
+                </div>
+                <div class="col-sm-5 form-box">
+                    <div class="form-top">
+                        <div class="form-top-left">
+                            <h3>请您确认</h3>
+                            <p>填写乘车人信息:</p>
+                        </div>
+                        <div class="form-top-right">
+                            <i class="fa fa-pencil"></i>
+                        </div>
+                        <div class="form-top-divider"></div>
+                    </div>
+                    <div class="form-bottom">
+                        <form role="form" action="" method="post" class="registration-form">
+                            <div class="form-group">
+                                <label class="sr-only" for="name">乘车人姓名</label>
+                                <input type="text" name="name" placeholder="乘车人姓名..." class="form-first-name form-control" id="name">
+                            </div>
+                            <div class="form-group">
+                                <label class="sr-only" for="ID">身份证号码</label>
+                                <input type="text" name="ID" placeholder="身份证号码..." class="form-last-name form-control" id="ID">
+                            </div>
+                            <div class="form-group">
+                                <label class="sr-only" for="phone">联系电话</label>
+                                <input type="text" name="phone" placeholder="联系电话..." class="form-email form-control" id="phone">
+                            </div>
+                            <div class="form-group">
+                                <label class="sr-only" for="n">购票张数</label>
+                                <input type="text" name="n" placeholder="购票张数..." class="form-email form-control" id="n">
+                            </div>
+                            <br/>
+                            <!--<a class="btn btn-link-1" href="#">Button 1</a>-->
+                            <!--<a class="btn btn-link-2" href="#">Button 2</a>-->
+
+                            <button type="submit" class="btn" onclick="buy()">提 交</button>
+                            <br/>
+                            <br/>
+
+                            <button type="submit" class="btn" onclick="back()">返 回</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<!-- Javascript -->
+<script th:src="@{assets/js/jquery-1.11.1.min.js}"></script>
+<script th:src="@{assets/bootstrap/js/bootstrap.min.js}"></script>
+<script th:src="@{assets/js/jquery.backstretch.min.js}"></script>
+<script th:src="@{assets/js/retina-1.1.0.min.js}"></script>
+<script th:src="@{assets/js/scripts.js}"></script>
+
+<!--[if lt IE 10]>
+<script th:src="@{assets/js/placeholder.js}"></script>
+<![endif]-->
+
+</body>
+
+</html>

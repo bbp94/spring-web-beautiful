@@ -1,0 +1,228 @@
+<!DOCTYPE HTML >
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>选票</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+    <style type="text/css">
+        table
+        {
+            border-collapse: collapse;//单线条边框
+            border-spacing: 0;
+            margin-right: auto;
+            margin-left: auto;
+            width: 800px;
+        }
+        th, td
+        {
+            border: 1px solid #b5d6e6;
+            font-size: 15px;
+            font-weight: normal;
+            text-align: center;
+            vertical-align: middle;
+            height: 20px;
+        }
+        th
+        {
+            font-size: 20px;
+            background-color: lightblue;//表头背景色
+        }
+        .tickTable{
+            table-layout: fixed;
+            top: 50%;
+        }
+
+        .tickTable td{
+            word-wrap: break-word;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .search{
+            position: relative;
+            left: 240px;
+        }
+    </style>
+    <script src="http://code.jquery.com/jquery-1.11.3.js"></script>
+    <!--<script language=javascript src="js/calendar.js"></script>-->
+
+
+    <script type="text/javascript">
+        $(function () {
+            var $hello = $('#hello');
+            var name = window.location.href.split("=")[1];
+            var hello = "欢迎"+decodeURI(name)+"使用bbp购票系统！"
+            $hello.html(hello).css('color','green');
+        });
+
+
+        function getSomeTrain() {
+            // var o = document.getElementById('origin');
+            // var t = document.getElementById('terminal');
+            var data = 'date=' + $('#date').val() + '&origin=' + $('#origin').val() +
+                '&terminal=' + $('#terminal').val();
+
+            $.ajax({
+                type: 'POST',
+                url: '/ticket/some',
+                data: data,
+                dataType : "json",
+                success : function (trains) {
+                    var i = 1;
+                    var tb = document.getElementById('train_table');
+                    var rowNum=tb.rows.length;
+                    for (i=1;i<rowNum;i++)
+                    {
+                        tb.deleteRow(i);
+                        rowNum=rowNum-1;
+                        i=i-1;
+                    }
+                    trains.forEach(function (t, number) {
+                        var row = document.getElementById("train_table").insertRow(number+1);//在第二行后添加新行
+                        // var id = t[7];
+                        var c1 = row.insertCell(0);//在一行的指定位置插入单元格
+                        c1.innerHTML = t[0];//插入内容
+                        var c2 = row.insertCell(1);
+                        c2.innerHTML = t[1];
+                        var c3 = row.insertCell(2);
+                        c3.innerHTML = decodeURI(t[2]);
+                        var c3 = row.insertCell(3);
+                        c3.innerHTML = decodeURI(t[3]);
+                        var c4 = row.insertCell(4);
+                        c4.innerHTML = t[4];
+                        var c5 = row.insertCell(5);
+                        c5.innerHTML = t[5];
+                        var c6 = row.insertCell(6);
+                        c6.innerHTML = t[6];
+                        var c7 = row.insertCell(7);
+                        c7.innerHTML = '<button id="buy" name="buy" value="buy" onclick=buy(this)>购买</button>';
+                    })
+                },
+                error : function () {
+                    alert('error!')
+                }
+            });
+        }
+
+        function buy(o) {
+            var info = o.parentNode.parentNode.rowIndex;
+            var name = window.location.href.split("=")[1];
+            var startData = $("#train_table tr:eq(" + info + ") td:eq(0)").html();
+
+            var number = $("#train_table tr:eq(" + info + ") td:eq(1)").html();
+            var origin = $("#train_table tr:eq(" + info + ") td:eq(2)").html();
+            var terminal = $("#train_table tr:eq(" + info + ") td:eq(3)").html();
+            var endDate = $("#train_table tr:eq(" + info + ") td:eq(4)").html();
+            var price = $("#train_table tr:eq(" + info + ") td:eq(5)").html();
+            var url = decodeURI("http://localhost:2718/buy?id="+name+"?startDate="+startData+
+                "?number="+number+"?origin=" +origin+"?terminal="+terminal+"?endDate="+endDate
+                +"?price="+price);
+            $(location).attr('href', url);
+        }
+
+
+    </script>
+</head>
+<body>
+<!--/*@thymesVar id="name" type="java.lang.String"*/-->
+<div style="font-size: 24px;text-align:center;">
+    <p id="hello"></p>
+    <p id="hello2"></p>
+</div>
+
+<div class="search" xmlns="http://www.w3.org/1999/xhtml" style="vertical-align: middle;">
+    出发日期：<input id="date" type="date" name="date" max="2018-06-03" min="2018-06-01" value="" >
+    <!--出发站：<input id="origin" name="origin" value="">-->
+    出发站:<select id="origin" name="origin" >
+    <option value ="北京">北京</option>
+    <option value ="天津">天津</option>
+    <option value ="沧州">沧州</option>
+    <option value ="德州">德州</option>
+    <option value ="济南">济南</option>
+    <option value ="徐州">徐州</option>
+    <option value ="南京">南京</option>
+    <option value ="芜湖">芜湖</option>
+    <option value ="景德镇">景德镇</option>
+    <option value ="邵武">邵武</option>
+    <option value ="南平">南平</option>
+    <option value ="保定">保定</option>
+    <option value ="石家庄">石家庄</option>
+    <option value ="郑州">郑州</option>
+    <option value ="武汉">武汉</option>
+    <option value ="长沙">长沙</option>
+    <option value ="衡阳">衡阳</option>
+    <option value ="韶关">韶关</option>
+    <option value ="溧阳">溧阳</option>
+    <option value ="宜兴">宜兴</option>
+    <option value ="湖州">湖州</option>
+    <option value ="杭州">杭州</option>
+    <option value ="上饶">上饶</option>
+    <option value ="武夷山">武夷山</option>
+    <option value ="厦门">厦门</option>
+        <!--<option value="opel">Opel</option>-->
+        <!--<option value="audi">Audi</option>-->
+    </select>
+    <!--到达站：<input id="terminal" name="terminal" value="">-->
+    到达站:<select id="terminal" name="terminal" >
+    <option  value ="福州">福州</option>
+    <option  value ="广州">广州</option>
+    <option value ="天津">天津</option>
+    <option value ="沧州">沧州</option>
+    <option value ="德州">德州</option>
+    <option value ="济南">济南</option>
+    <option value ="徐州">徐州</option>
+    <option value ="南京">南京</option>
+    <option value ="芜湖">芜湖</option>
+    <option value ="景德镇">景德镇</option>
+    <option value ="邵武">邵武</option>
+    <option value ="南平">南平</option>
+    <option value ="保定">保定</option>
+    <option value ="石家庄">石家庄</option>
+    <option value ="郑州">郑州</option>
+    <option value ="武汉">武汉</option>
+    <option value ="长沙">长沙</option>
+    <option value ="衡阳">衡阳</option>
+    <option value ="韶关">韶关</option>
+    <option value ="溧阳">溧阳</option>
+    <option value ="宜兴">宜兴</option>
+    <option value ="湖州">湖州</option>
+    <option value ="杭州">杭州</option>
+    <option value ="上饶">上饶</option>
+    <option value ="武夷山">武夷山</option>
+    <option value ="厦门">厦门</option>
+    <!--<option value="opel">Opel</option>-->
+    <!--<option value="audi">Audi</option>-->
+</select>
+    <input id="btn" type="button" name="button" value="搜索" onclick="getSomeTrain()">
+    <br/>
+    <br/>
+</div>
+
+<div class="tickTable">
+    <table id="train_table">
+        <tr>
+            <th style="width: 160px;">出发日期</th>
+            <th style="width: 160px;">车次</th>
+            <th style="width: 160px;">起点站 </th>
+            <th style="width: 160px;">终点站</th>
+            <th style="width: 160px;">到达日期</th>
+            <th style="width: 160px;">余票</th>
+            <th style="width: 160px;">价格</th>
+            <th style="width: 160px;">购买</th>
+        </tr>
+
+        <!--<tr>-->
+            <!--<td >第一行第一列</td>-->
+            <!--<td >第一行第二列</td>-->
+            <!--<td >第一行第三列</td>-->
+            <!--<td >第一行第四列</td>-->
+            <!--<td >第一行第五列</td>-->
+            <!--<td >第一行第六列</td>-->
+        <!--</tr>-->
+
+    </table>
+</div>
+
+
+</body>
+</html>

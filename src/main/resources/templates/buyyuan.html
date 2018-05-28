@@ -1,0 +1,101 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>hello</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <style type="text/css">
+        div{
+            padding:2px 0px;
+            font-size:30px;
+            text-align:center;
+            /*border:solid 1px #888;*/
+        }
+    </style>
+    <script src="http://code.jquery.com/jquery-1.11.3.js"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            var $hello = $('#hello');
+            var $ticket = $('#ticket');
+            var $check = $('#check');
+            var name = window.location.href.split("?")[1].split("=")[1];
+            var hello = "购票信息确认";
+            document.getElementById("hello").innerHTML = '<h1>您将购买<strong>'+name+'</strong> 从</h1>';
+            // $hello.html(hello).css('color','green');
+
+            var startDate = window.location.href.split("?")[2].split("=")[1];
+            var number = window.location.href.split("?")[3].split("=")[1];
+            var origin = window.location.href.split("?")[4].split("=")[1];
+            var terminal = window.location.href.split("?")[5].split("=")[1];
+            var endDate  = window.location.href.split("?")[6].split("=")[1];
+            var price = window.location.href.split("?")[7].split("=")[1];
+
+            var ticket = "您将购买  "+decodeURI(startDate)+"  从  "+decodeURI(origin)+"  开往  "+
+                decodeURI(terminal)+"  的  "+number+"次  车票"
+            $ticket.html(ticket).css('color','blue');
+
+            var check = "请您确认，并填写以下信息："
+
+            $check.html(check).css('color','blue');
+
+
+            $('#passenger').append("*乘客姓名：<input type='text'>").css('color','red');
+            $('#id').append("*身份证号码：<input type='text'/>").css('color','red');
+            // $('#n').append("*购买张数：<input type='text'/>").css('color','red');
+            $('#tijiao').append("<input type='button' value='提交' onclick=ok()> ");
+
+
+        })
+        function ok() {
+            var name = window.location.href.split("?")[1].split("=")[1];
+            var start = window.location.href.split("?")[2].split("=")[1];
+            var number = window.location.href.split("?")[3].split("=")[1];
+            var origin = window.location.href.split("?")[4].split("=")[1];
+            var terminal = window.location.href.split("?")[5].split("=")[1];
+
+            // var jsonData = "{\"start\":\""+decodeURI(start)+"\"}";
+            var data = 'date=' + start +'&number='+number+ '&origin=' + origin +
+                '&terminal=' + terminal+'&n='+ $('#n').val();
+            $.ajax({
+                type: 'POST',
+                url: '/buy/check',
+                data: data,
+                dataType : "TEXT",
+                success : function () {
+                    alert("购票成功！");
+                    var url = decodeURI("http://localhost:2718/show?name="+name);
+                    $(location).attr('href', url);
+                },
+                error : function () {
+                    alert('error!');
+                }
+
+            })
+        }
+
+
+
+    </script>
+</head>
+<body>
+<!--/*@thymesVar id="name" type="java.lang.String"*/-->
+<div>
+    <p id="hello"></p>
+    <p id="ticket"></p>
+    <p id="check"></p>
+    <p id="passenger"></p>
+    <p id="id"></p>
+    <!--<p id="n"></p>-->
+    *购买张数:<input id="n">
+    <p id="tijiao"></p>
+
+</div>
+<div>
+
+</div>
+<!--<p th:text="'Hello！, ' + ${name} + '!'">3333</p>-->
+
+<!--&lt;!&ndash;/*@thymesVar id="time" type="java.lang.String"*/&ndash;&gt;-->
+<!--<p th:text="'Now is : ' + ${time} + '!'">3333</p>-->
+</body>
+</html>

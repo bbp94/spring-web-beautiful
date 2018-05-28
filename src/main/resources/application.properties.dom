@@ -1,0 +1,10 @@
+server.port=2718
+
+#thymeleaf start
+spring.thymeleaf.mode=HTML
+spring.thymeleaf.encoding=UTF-8
+spring.thymeleaf.cache=false
+spring.thymeleaf.prefix=classpath:templates/
+spring.thymeleaf.suffix=.html
+
+#thymeleaf end

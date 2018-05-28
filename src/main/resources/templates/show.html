@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport">
+
+    <!-- ========== SEO ========== -->
+    <title>Home</title>
+    <meta content="" name="description">
+    <meta content="" name="keywords">
+    <meta content="" name="author">
+
+    <!-- ========== FAVICON ========== -->
+    <link rel="apple-touch-icon-precomposed" href="images/favicon-apple.png" />
+    <link rel="icon" href="images/favicon.png">
+
+    <!-- ========== STYLESHEETS ========== -->
+    <link th:href="@{show/css/bootstrap.min.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{show/revolution/css/layers.css}" rel="stylesheet" type="text/css" />
+    <link th:href="@{show/revolution/css/settings.css}" rel="stylesheet" type="text/css" />
+    <link th:href="@{show/revolution/css/navigation.css}" rel="stylesheet" type="text/css" />
+    <link th:href="@{show/css/bootstrap-select.min.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{show/css/animate.min.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{show/css/famfamfam-flags.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{show/css/magnific-popup.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{show/css/owl.carousel.min.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{show/css/style.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{show/css/responsive.css}" rel="stylesheet" type="text/css">
+
+    <!-- ========== ICON FONTS ========== -->
+    <link th:href="@{show/fonts/font-awesome.min.css}" rel="stylesheet">
+    <link th:href="@{show/fonts/flaticon.css}" rel="stylesheet">
+
+    <!-- ========== GOOGLE FONTS ========== -->
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,900%7cRaleway:400,500,600,700" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <script type="text/javascript">
+        $(function () {
+            var $hello = $('#hello');
+            var name = window.location.href.split("=")[1];
+            var hello = "欢迎"+decodeURI(name)+"使用bbp购票系统！"
+            $hello.html(hello).css('color','green');
+        });
+
+
+        function getSomeTrain() {
+            // var o = document.getElementById('origin');
+            // var t = document.getElementById('terminal');
+            var data = 'date=' + $('#date').val() + '&origin=' + $('#origin').val() +
+                '&terminal=' + $('#terminal').val();
+
+            $.ajax({
+                type: 'POST',
+                url: '/ticket/some',
+                data: data,
+                dataType : "json",
+                success : function (trains) {
+
+                    var i = 1;
+                    var tb = document.getElementById('train_table');
+                    var rowNum=tb.rows.length;
+                    for (i=1;i<rowNum;i++)
+                    {
+                        tb.deleteRow(i);
+                        rowNum=rowNum-1;
+                        i=i-1;
+                    }
+                    // var th=document.getElementById("train_table").insertRow(number+1);
+                    
+                    trains.forEach(function (t, number) {
+                        var row = document.getElementById("train_table").insertRow(number+1);//在第二行后添加新行
+                        // var id = t[7];
+                        var c1 = row.insertCell(0);//在一行的指定位置插入单元格
+                        c1.innerHTML = t[0];//插入内容
+                        var c2 = row.insertCell(1);
+                        c2.innerHTML = t[1];
+                        var c3 = row.insertCell(2);
+                        c3.innerHTML = decodeURI(t[2]);
+                        var c3 = row.insertCell(3);
+                        c3.innerHTML = decodeURI(t[3]);
+                        var c4 = row.insertCell(4);
+                        c4.innerHTML = t[4];
+                        var c5 = row.insertCell(5);
+                        c5.innerHTML = t[5];
+                        var c6 = row.insertCell(6);
+                        c6.innerHTML = t[6];
+                        var c7 = row.insertCell(7);
+                        c7.innerHTML = '<button id="buy" name="buy" value="buy" onclick=buy(this)>购买</button>';
+                    })
+                },
+                error : function () {
+                    alert('error!')
+                }
+            });
+        }
+
+        function buy(o) {
+            var info = o.parentNode.parentNode.rowIndex;
+            var name = window.location.href.split("=")[1];
+            var startData = $("#train_table tr:eq(" + info + ") td:eq(0)").html();
+
+            var number = $("#train_table tr:eq(" + info + ") td:eq(1)").html();
+            var origin = $("#train_table tr:eq(" + info + ") td:eq(2)").html();
+            var terminal = $("#train_table tr:eq(" + info + ") td:eq(3)").html();
+            var endDate = $("#train_table tr:eq(" + info + ") td:eq(4)").html();
+            var price = $("#train_table tr:eq(" + info + ") td:eq(5)").html();
+            var url = decodeURI("http://localhost:2718/buy?id="+name+"?startDate="+startData+
+                "?number="+number+"?origin=" +origin+"?terminal="+terminal+"?endDate="+endDate
+                +"?price="+price);
+            $(location).attr('href', url);
+        }
+
+
+    </script>
+
+
+
+
+</head>
+
+<body>
+
+<!-- ========== PRELOADER ========== -->
+<div id="loading">
+    <div class="inner">
+        <div class="loading_effect">
+            <div class="object" id="object_one"></div>
+            <div class="object" id="object_two"></div>
+            <div class="object" id="object_three"></div>
+        </div>
+    </div>
+</div>
+
+<div class="wrapper">
+
+    <!-- ========== TOP MENU ========== -->
+
+
+    <!-- ========== HEADER ========== -->
+
+
+    <!-- ========== REVOLUTION SLIDER ========== -->
+    <div id="hero" class="rev_slider gradient_slider" style="display:none">
+        <ul>
+
+            <li data-index="rs-214"
+                data-delay="1000"
+                data-transition="fade"
+                data-slotamount="7"
+                data-easein="default"
+                data-easeout="default"
+                data-masterspeed="100"
+                data-rotate="0"
+                data-saveperformance="off"
+                data-title="Slide"
+                data-description="">
+                <!-- IMAGE -->
+                <img src="show/images/slider/hero.jpg" alt="Image" data-bgposition="center center" data-bgfit="cover" data-bgrepeat="no-repeat" data-bgparallax="5" class="rev-slidebg" data-no-retina>
+                <!-- LAYER NR. 1 -->
+                <div class="tp-caption"
+                     data-x="['left','left','left','center']"
+                     data-hoffset="['15','15','15','0']"
+                     data-y="['190','200','200','200']"
+                     data-responsive_offset="on"
+                     data-fontsize="['40','28','28','22']"
+                     data-lineheight="['40','28','28','22']"
+                     data-whitespace="nowrap"
+                     data-frames='[{"delay":0,"speed":10,"frame":"0","from":"y:[100%];z:0;rX:0deg;rY:0;rZ:0;sX:1;sY:1;skX:0;skY:0;opacity:0;","mask":"x:0px;y:[100%];s:inherit;e:inherit;","to":"o:1;","ease":"Power2.easeInOut"}]'
+                     style="color: #fff; font-weight: 700; font-family: 'Raleway', sans-serif;; ">世界那么大, BBP带你去看看</span>
+                </div>
+                <!-- LAYER NR. 2 -->
+                <div class="tp-caption tp_m_title"
+                     data-visibility="['on','on','off','off']"
+                     data-x="['left','left','left','left']"
+                     data-hoffset="['15','15','15','15']"
+                     data-y="['280','middle','middle','middle']"
+                     data-voffset="['-60','-60','-60','-60']"
+                     data-fontsize="['28','28','23','23']"
+                     data-lineheight="['28','28','23','23']"
+                     data-frames='[{"delay":0,"speed":10,"frame":"0","from":"y:[100%];z:0;rX:0deg;rY:0;rZ:0;sX:1;sY:1;skX:0;skY:0;opacity:0;","mask":"x:0px;y:[100%];s:inherit;e:inherit;","to":"o:1;","ease":"Power2.easeInOut"}]'><i class="fa fa-star-o"></i>
+                </div>
+                <!-- LAYER NR. 3 -->
+                <div class="tp-caption tp_m_title"
+                     data-visibility="['on','on','off','off']"
+                     data-x="['left','left','left','left']"
+                     data-hoffset="['55','45','45','45']"
+                     data-y="['280','middle','middle','middle']"
+                     data-voffset="['-60','-60','-60','-60']"
+                     data-responsive_offset="on"
+                     data-fontsize="['28','28','23','23']"
+                     data-lineheight="['28','28','23','23']"
+                     data-frames='[{"delay":0,"speed":10,"frame":"0","from":"y:[100%];z:0;rX:0deg;rY:0;rZ:0;sX:1;sY:1;skX:0;skY:0;opacity:0;","mask":"x:0px;y:[100%];s:inherit;e:inherit;","to":"o:1;","ease":"Power2.easeInOut"}]'><i class="fa fa-star-o"></i>
+                </div>
+                <!-- LAYER NR. 4 -->
+                <div class="tp-caption tp_m_title"
+                     data-visibility="['on','on','off','off']"
+                     data-x="['left','left','left','left']"
+                     data-hoffset="['95','75','75','75']"
+                     data-y="['280','middle','middle','middle']"
+                     data-voffset="['-60','-60','-60','-60']"
+                     data-responsive_offset="on"
+                     data-fontsize="['28','28','23','23']"
+                     data-lineheight="['28','28','23','23']"
+                     data-frames='[{"delay":0,"speed":10,"frame":"0","from":"y:[100%];z:0;rX:0deg;rY:0;rZ:0;sX:1;sY:1;skX:0;skY:0;opacity:0;","mask":"x:0px;y:[100%];s:inherit;e:inherit;","to":"o:1;","ease":"Power2.easeInOut"}]'><i class="fa fa-star-o"></i>
+                </div>
+                <!-- LAYER NR. 5 -->
+                <div class="tp-caption tp_m_title"
+                     data-visibility="['on','on','off','off']"
+                     data-x="['left','left','left','left']"
+                     data-hoffset="['135','105','105','105']"
+                     data-y="['280','middle','middle','middle']"
+                     data-voffset="['-60','-60','-60','-60']"
+                     data-responsive_offset="on"
+                     data-fontsize="['28','28','23','23']"
+                     data-lineheight="['28','28','23','23']"
+                     data-frames='[{"delay":0,"speed":10,"frame":"0","from":"y:[100%];z:0;rX:0deg;rY:0;rZ:0;sX:1;sY:1;skX:0;skY:0;opacity:0;","mask":"x:0px;y:[100%];s:inherit;e:inherit;","to":"o:1;","ease":"Power2.easeInOut"}]'><i class="fa fa-star-o"></i>
+                </div>
+                <!-- LAYER NR. 6 -->
+                <div class="tp-caption tp_m_title"
+                     data-visibility="['on','on','off','off']"
+                     data-x="['left','left','left','left']"
+                     data-hoffset="['175','135','135','135']"
+                     data-y="['280','middle','middle','middle']"
+                     data-voffset="['-60','-60','-60','-60']"
+                     data-responsive_offset="on"
+                     data-fontsize="['28','28','23','23']"
+                     data-lineheight="['28','28','23','23']"
+                     data-frames='[{"delay":0,"speed":10,"frame":"0","from":"y:[100%];z:0;rX:0deg;rY:0;rZ:0;sX:1;sY:1;skX:0;skY:0;opacity:0;","mask":"x:0px;y:[100%];s:inherit;e:inherit;","to":"o:1;","ease":"Power2.easeInOut"}]'><i class="fa fa-star-o"></i>
+                </div>
+                <!-- LAYER NR. 7 -->
+                <div class="tp-caption tp_m_title"
+                     data-visibility="['on','on','off','off']"
+                     data-x="left"
+                     data-hoffset="['215','175','175','175']"
+                     data-y="['280','middle','middle','middle']"
+                     data-voffset="['-60','-60','-60','-60']"
+                     data-responsive_offset="on"
+                     data-fontsize="['30','30','25','25']"
+                     data-lineheight="['30','30','25','25']"
+                     data-frames='[{"delay":0,"speed":10,"frame":"0","from":"y:[100%];z:0;rX:0deg;rY:0;rZ:0;sX:1;sY:1;skX:0;skY:0;opacity:0;","mask":"x:0px;y:[100%];s:inherit;e:inherit;","to":"o:1;","ease":"Power2.easeInOut"}]'>请填写信息，开始订票
+                </div>
+                <!-- LAYER NR. 8 -->
+
+                <!-- LAYER NR. 9 -->
+
+                <!-- LAYER NR. 10 -->
+
+                <!-- LAYER NR. 14 -->
+                <div class="tp-caption"
+                     data-x="['right','right','center','center']"
+                     data-hoffset="['15','15','0','0']"
+                     data-y="['200','middle','bottom','bottom']"
+                     data-voffset="['','50','50','']"
+                     data-width="[368, 368, 768, 480]"
+                     data-height="[auto, auto, auto, auto]"
+                     data-frames='[{"delay":0,"speed":10,"frame":"0","from":"y:[100%];z:0;rX:0deg;rY:0;rZ:0;sX:1;sY:1;skX:0;skY:0;opacity:0;","mask":"x:0px;y:[100%];s:inherit;e:inherit;","to":"o:1;","ease":"Power2.easeInOut"}]'
+                     style="z-index: 99;">
+                    <!-- ========== BOOKING FORM ========== -->
+                    <div class="vbf">
+                        <h2 class="form_title"><i class="fa fa-calendar"></i> 乘车信息</h2>
+                        <form id="booking-form" class="inner">
+
+                            <div class="form-group">
+
+                                <div class="form_date">
+                                    <input type="text" class="datepicker form-control" name="booking-checkout" placeholder="乘车日期" readonly>
+                                </div>
+
+                            </div>
+                            <div class="form-group">
+                                <div class="form_select">
+                                    <select id="origin" name="booking-roomtype" class="form-control" title="出发站" data-header="出发站">
+                                        <option value ="北京">北京</option>
+                                        <option value ="天津">天津</option>
+                                        <option value ="沧州">沧州</option>
+                                        <option value ="德州">德州</option>
+                                        <option value ="济南">济南</option>
+                                        <option value ="徐州">徐州</option>
+                                        <option value ="南京">南京</option>
+                                        <option value ="芜湖">芜湖</option>
+                                        <option value ="景德镇">景德镇</option>
+                                        <option value ="邵武">邵武</option>
+                                        <option value ="南平">南平</option>
+                                        <option value ="保定">保定</option>
+                                        <option value ="石家庄">石家庄</option>
+                                        <option value ="郑州">郑州</option>
+                                        <option value ="武汉">武汉</option>
+                                        <option value ="长沙">长沙</option>
+                                        <option value ="衡阳">衡阳</option>
+                                        <option value ="韶关">韶关</option>
+                                        <option value ="溧阳">溧阳</option>
+                                        <option value ="宜兴">宜兴</option>
+                                        <option value ="湖州">湖州</option>
+                                        <option value ="杭州">杭州</option>
+                                        <option value ="上饶">上饶</option>
+                                        <option value ="武夷山">武夷山</option>
+                                        <option value ="厦门">厦门</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="form_select">
+                                    <select id="terminal" name="booking-roomtype" class="form-control" title="到达站" data-header="到达站">
+                                        <option  value ="福州">福州</option>
+                                        <option  value ="广州">广州</option>
+                                        <option value ="天津">天津</option>
+                                        <option value ="沧州">沧州</option>
+                                        <option value ="德州">德州</option>
+                                        <option value ="济南">济南</option>
+                                        <option value ="徐州">徐州</option>
+                                        <option value ="南京">南京</option>
+                                        <option value ="芜湖">芜湖</option>
+                                        <option value ="景德镇">景德镇</option>
+                                        <option value ="邵武">邵武</option>
+                                        <option value ="南平">南平</option>
+                                        <option value ="保定">保定</option>
+                                        <option value ="石家庄">石家庄</option>
+                                        <option value ="郑州">郑州</option>
+                                        <option value ="武汉">武汉</option>
+                                        <option value ="长沙">长沙</option>
+                                        <option value ="衡阳">衡阳</option>
+                                        <option value ="韶关">韶关</option>
+                                        <option value ="溧阳">溧阳</option>
+                                        <option value ="宜兴">宜兴</option>
+                                        <option value ="湖州">湖州</option>
+                                        <option value ="杭州">杭州</option>
+                                        <option value ="上饶">上饶</option>
+                                        <option value ="武夷山">武夷山</option>
+                                        <option value ="厦门">厦门</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <button class="button btn_lg btn_blue btn_full" type="submit" onclick="getSomeTrain()">搜       索</button>
+
+                        </form>
+                    </div>
+                </div>
+                <!-- LAYER NR. 15 -->
+                <div class="tp-caption"
+                     data-visibility="['on','on','off','off']"
+                     data-x="['center','center','center','center']"
+                     data-hoffset="['0','0','0','0']"
+                     data-y="['bottom','bottom','bottom','bottom']"
+                     data-voffset="['20','20','20','20']"
+                     data-width="none"
+                     data-height="none"
+                     data-whitespace="nowrap"
+                     data-transform_idle="o:1;"
+                     data-transform_in="opacity:0;s:500;e:Power2.easeInOut;"
+                     data-transform_out="opacity:0;s:300;s:300;"
+                     data-start="8000"
+                     data-splitin="none"
+                     data-splitout="none"
+                     data-actions='[{"event":"click","action":"scrollbelow","offset":"px"}]'
+                     data-responsive_offset="on"
+                     data-startslide="0"
+                     data-endslide="2"
+                     style="z-index: 11; white-space: nowrap; font-size: 22px; line-height: 30px; font-weight: 400; color: rgba(245, 245, 245, 1.00);text-transform:left;cursor:pointer;">
+                    <div class="rs-looped rs-slideloop" data-easing="Power2.easeInOut" data-speed="1" data-xs="0" data-xe="0" data-ys="-5" data-ye="5"><i class="fa fa-angle-down"></i></div>
+                </div>
+            </li>
+
+        </ul>
+    </div>
+</div>
+
+
+
+    <!-- ========== JAVASCRIPT ========== -->
+    <script type="text/javascript" th:src="@{show/js/jquery.min.js}"></script>
+    <!---<script type="text/javascript" src="http://ditu.google.cn/maps/api/js?key=AIzaSyBDgMJEPio2qomUKV1iqlIufj4u2NVd3q4"></script>--->
+    <script type="text/javascript" th:src="@{show/js/bootstrap.min.js}"></script>
+    <script type="text/javascript" th:src="@{show/js/bootstrap-datepicker.min.js}"></script>
+    <script type="text/javascript" th:src="@{show/js/bootstrap-select.min.js}"></script>
+    <script type="text/javascript" th:src="@{show/js/jquery.smoothState.js}"></script>
+    <script type="text/javascript" th:src="@{show/js/moment.min.js}"></script>
+    <script type="text/javascript" th:src="@{show/js/morphext.min.js}"></script>
+    <script type="text/javascript" th:src="@{show/js/wow.min.js}"></script>
+    <script type="text/javascript" th:src="@{show/js/jquery.easing.min.js}"></script>
+    <script type="text/javascript" th:src="@{show/js/owl.carousel.min.js}"></script>
+    <script type="text/javascript" th:src="@{show/js/owl.carousel.thumbs.min.js}"></script>
+    <script type="text/javascript" th:src="@{show/js/jquery.magnific-popup.min.js}"></script>
+    <script type="text/javascript" th:src="@{show/js/jPushMenu.js}"></script>
+    <script type="text/javascript" th:src="@{show/js/isotope.pkgd.min.js}"></script>
+    <script type="text/javascript" th:src="@{show/js/countUp.min.js}"></script>
+    <script type="text/javascript" th:src="@{show/js/jquery.countdown.min.js}"></script>
+    <script type="text/javascript" th:src="@{show/js/main.js}"></script>
+
+    <!-- ========== REVOLUTION SLIDER ========== -->
+    <script type="text/javascript" th:src="@{show/revolution/js/jquery.themepunch.tools.min.js}"></script>
+    <script type="text/javascript" th:src="@{show/revolution/js/jquery.themepunch.revolution.min.js}"></script>
+    <script type="text/javascript" th:src="@{show/revolution/js/extensions/revolution.extension.actions.min.js}"></script>
+    <script type="text/javascript" th:src="@{show/revolution/js/extensions/revolution.extension.carousel.min.js}"></script>
+    <script type="text/javascript" th:src="@{show/revolution/js/extensions/revolution.extension.kenburn.min.js}"></script>
+    <script type="text/javascript" th:src="@{show/revolution/js/extensions/revolution.extension.layeranimation.min.js}"></script>
+    <script type="text/javascript" th:src="@{show/revolution/js/extensions/revolution.extension.migration.min.js}"></script>
+    <script type="text/javascript" th:src="@{show/revolution/js/extensions/revolution.extension.navigation.min.js}"></script>
+    <script type="text/javascript" th:src="@{show/revolution/js/extensions/revolution.extension.parallax.min.js}"></script>
+    <script type="text/javascript" th:src="@{show/revolution/js/extensions/revolution.extension.slideanims.min.js}"></script>
+    <script type="text/javascript" th:src="@{show/revolution/js/extensions/revolution.extension.video.min.js}"></script>
+
+</body>
+</html>
