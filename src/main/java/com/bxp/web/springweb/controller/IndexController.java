@@ -7,6 +7,7 @@ import com.bxp.web.springweb.train.Train;
 import com.bxp.web.springweb.train.UserInfo;
 import com.google.common.collect.Lists;
 
+import org.apache.catalina.connector.Response;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.apache.commons.collections4.CollectionUtils;
 import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.*;
@@ -92,8 +95,10 @@ public class IndexController {
     @ResponseBody
     public String getSomeTickets(String date,String origin,String terminal){
         float pricePer = 0.2f;
+
 //        List<Train> tick = ticketDao.getAllTrain();
-        date = date.replace("-","");
+        date = date.split("/")[2]+date.split("/")[1]+date.split("/")[0];
+        System.out.println(date);
         List<Train> allTrain = ticketDao.getAllTrainByDate(date);
         String intermediate = "";
         ArrayList<List> tickets_info = new ArrayList<List>();
@@ -152,9 +157,12 @@ public class IndexController {
         return "buy";
     }
     @RequestMapping("/buy/check")
-    public String check(String date,String number,String origin,String terminal,String n){
+    @ResponseBody
+    public String check(String date,String number,String origin,String terminal,String n,String name){
         String tempDate = date.split(" ")[0].replace(".","");
-        Train train = ticketDao.getATrain(tempDate,origin,terminal,number);
+        Train train = ticketDao.getATrain(tempDate,number);
+        System.out.println(train.getIntermediate_station());
+        System.out.println(train.getIntermediate_station().split(";")[8]);
         int index = Arrays.asList(train.getIntermediate_station().split(";")).indexOf(terminal);
         String[] temp = train.getTickets_left().split(";");
         int newLeft = Integer.valueOf(temp[index])-Integer.valueOf(n);
@@ -169,10 +177,7 @@ public class IndexController {
 
         }
         ticketDao.updateLeft(left,tempDate,number);
-        train = ticketDao.getATrain(tempDate,origin,terminal,number);
-        System.out.println(left+"  "+ tempDate +"  "+number);
-        System.out.println(train.getTickets_left());
 
-        return "show";
+        return JSON.toJSONString("");
     }
 }

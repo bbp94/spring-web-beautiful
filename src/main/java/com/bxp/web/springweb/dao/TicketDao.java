@@ -31,11 +31,9 @@ public interface TicketDao {
                              @Param("origin") String origin,
                              @Param("terminal") String terminal);
 
-    @Select("SELECT * FROM train_info WHERE DATE=#{date} AND ORIGIN_STATION=#{origin} AND TERMINAL_STATION=#{terminal} AND NUMBER=#{number}")
+    @Select("SELECT * FROM train_info WHERE DATE=#{date} AND NUMBER=#{number}")
     @ResultType(value = Train.class)
     Train getATrain(@Param("date") String date,
-                    @Param("origin") String origin,
-                    @Param("terminal") String terminal,
                     @Param("number") String number);
 
     @Update("UPDATE train_info SET TICKETS_LEFT=#{left} WHERE DATE=#{date} AND NUMBER=#{number}")

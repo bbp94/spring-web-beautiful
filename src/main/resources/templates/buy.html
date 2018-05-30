@@ -6,7 +6,8 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bootstrap Flat Registration Form Template</title>
+
+    <title>确认</title>
 
     <!-- CSS -->
     <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:400,100,300,500">
@@ -20,26 +21,26 @@
         $(function () {
 
             var name = window.location.href.split("?")[1].split("=")[1];
-            var startDate = window.location.href.split("?")[2].split("=")[1];
-            var number = window.location.href.split("?")[3].split("=")[1];
-            var origin = window.location.href.split("?")[4].split("=")[1];
-            var terminal = window.location.href.split("?")[5].split("=")[1];
-            var endDate  = window.location.href.split("?")[6].split("=")[1];
-            var price = window.location.href.split("?")[7].split("=")[1];
+            var startDate = window.location.href.split("&")[1].split("=")[1];
+            var number = window.location.href.split("&")[2].split("=")[1];
+            var origin = window.location.href.split("&")[3].split("=")[1];
+            var terminal = window.location.href.split("&")[4].split("=")[1];
+            var endDate  = window.location.href.split("&")[5].split("=")[1];
+            var price = window.location.href.split("&")[6].split("=")[1];
             document.getElementById("ticket").innerHTML = '<p><font color="#ffb6c1">您将购买 </font><strong>'+decodeURI(startDate)+'</strong> <br/><font color="#ffb6c1">从</font>  <strong>'+decodeURI(origin)+'</strong>  <font color="#ffb6c1">开往</font>  <strong>'+decodeURI(terminal)+'</strong> <font color="#ffb6c1">的</font> <strong>'+number+'</strong>  <font color="#ffb6c1">次车票</font></p>';
 
         })
 
         function buy() {
-            var name = window.location.href.split("?")[1].split("=")[1];
-            var start = window.location.href.split("?")[2].split("=")[1];
-            var number = window.location.href.split("?")[3].split("=")[1];
-            var origin = window.location.href.split("?")[4].split("=")[1];
-            var terminal = window.location.href.split("?")[5].split("=")[1];
+            var name = window.location.href.split("&")[0].split("=")[1];
+            var start = window.location.href.split("&")[1].split("=")[1];
+            var number = window.location.href.split("&")[2].split("=")[1];
+            var origin = window.location.href.split("&")[3].split("=")[1];
+            var terminal = window.location.href.split("&")[4].split("=")[1];
 
             // var jsonData = "{\"start\":\""+decodeURI(start)+"\"}";
             var data = 'date=' + start +'&number='+number+ '&origin=' + origin +
-                '&terminal=' + terminal+'&n='+ $('#n').val();
+                '&terminal=' + terminal+'&n='+ $('#n').val()+'&name='+name;
             var nameE=document.getElementById("name");
             var id = document.getElementById("ID");
             var phone= document.getElementById("phone");
@@ -52,24 +53,33 @@
                 alert("购票张数填写有误！");
                 return;
             }
+
+
             $.ajax({
                 type: 'POST',
                 url: '/buy/check',
                 data: data,
-                dataType : "TEXT",
+                dataType : "json",
+                async : false,
+                timeout :50000,
                 success : function () {
+                    // alert(XmlHttpRequest.status);
                     alert("购票成功！");
-                    var url = decodeURI("http://localhost:2718/show?name="+name);
-                    $(location).attr('href', url);
+
+                    // var url = decodeURI("http://localhost:2718/show?name="+name);
+                    // window.location.href=url;
+                    // $(location).attr('href', url);
                 },
                 error : function () {
-                    alert('error!');
+
+                    alert("error");
                 }
 
             })
         }
 
         function back() {
+            var name = window.location.href.split("&")[0].split("=")[1];
             var url = decodeURI("http://localhost:2718/show?name="+name);
             $(location).attr('href', url);
         }
@@ -126,7 +136,7 @@
                             <!--<a class="btn btn-link-1" href="#">Button 1</a>-->
                             <!--<a class="btn btn-link-2" href="#">Button 2</a>-->
 
-                            <button type="submit" class="btn" onclick="buy()">提 交</button>
+                            <button  type="submit" class="btn" onclick="buy()">提 交</button>
                             <br/>
                             <br/>
 
